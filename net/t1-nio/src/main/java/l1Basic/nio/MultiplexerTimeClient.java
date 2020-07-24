@@ -25,7 +25,6 @@ public class MultiplexerTimeClient implements Runnable {
         socketChannel.configureBlocking(false);
     }
 
-    @Override
     public void run() {
         try {
             doConnect();
