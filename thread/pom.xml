@@ -9,21 +9,11 @@
     </parent>
     <modelVersion>4.0.0</modelVersion>
 
-    <artifactId>net</artifactId>
+    <artifactId>thread</artifactId>
     <packaging>pom</packaging>
     <modules>
-        <module>t1-nio</module>
-        <module>t2-netty</module>
-        <module>t3-netty-chat</module>
-        <module>t4-http</module>
+        <module>basic</module>
     </modules>
-    <dependencies>
-        <!-- Netty 依赖 -->
-        <dependency>
-            <groupId>io.netty</groupId>
-            <artifactId>netty-all</artifactId>
-            <version>4.1.50.Final</version>
-        </dependency>
-    </dependencies>
+
 
 </project>
