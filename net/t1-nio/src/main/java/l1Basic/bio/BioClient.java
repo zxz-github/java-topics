@@ -1,14 +1,13 @@
 package l1Basic.bio;
 
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.InputStreamReader;
-import java.io.PrintWriter;
+import org.apache.commons.io.IOUtils;
+
+import java.io.*;
 import java.net.Socket;
 
 public class BioClient {
     public static void main(String[] args) throws IOException {
-        int port = 8080;
+        int port = 8808;
         if (args != null && args.length > 0) {
             try {
                 port = Integer.valueOf(args[0]);
@@ -21,13 +20,10 @@ public class BioClient {
         PrintWriter printWriter = null;
         try {
             socket = new Socket("127.0.0.1", port);
-            while (true) {
-                bufferedReader = new BufferedReader(new InputStreamReader(socket.getInputStream()));
-                printWriter = new PrintWriter(socket.getOutputStream(), true);
-                printWriter.println("SJ");
-                String readLine = bufferedReader.readLine();
-                System.out.println(readLine);
-            }
+            InputStream is = socket.getInputStream();
+            OutputStream os = socket.getOutputStream();
+            os.write("GET / HTTP/1.1 \n".getBytes());
+            System.out.println(IOUtils.toString(is));
         } catch (IOException e) {
             e.printStackTrace();
         } finally {

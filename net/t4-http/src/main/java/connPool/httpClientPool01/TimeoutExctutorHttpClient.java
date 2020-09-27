@@ -1,4 +1,4 @@
-package connPool;
+package connPool.httpClientPool01;
 
 import org.apache.http.client.config.RequestConfig;
 import org.apache.http.client.methods.CloseableHttpResponse;
@@ -111,18 +111,27 @@ public class TimeoutExctutorHttpClient {
         return executor.submit(new HttpRequestTask(request, context));
     }
 
-    public static CompletableFuture<CloseableHttpResponse> asyncRequest(final HttpUriRequest request, final HttpClientContext context) {
-        CompletableFuture<CloseableHttpResponse> res = CompletableFuture
+    public static void asyncRequest(final HttpUriRequest request,
+                                    HandleRequestFunction<? super HttpUriRequest, ? super CloseableHttpResponse, ? super HttpClientContext, Throwable> handler) {
+        HttpClientContext ctx = HttpClientContext.create();
+        CompletableFuture
                 .supplyAsync(() -> {
                     try {
-                        context.setAttribute("request", request);
-                        return getClient(request.getURI().getHost()).execute(request, context);
+                        return getClient(request.getURI().getHost()).execute(request, ctx);
                     } catch (IOException e) {
                         e.printStackTrace();
                         return null;
                     }
-                }, executor);
-        return res;
+                }, executor)
+                .handle((response, throwable) -> {
+                    handler.apply(request, response, ctx, throwable);
+                    return response;
+                });
+    }
+
+    @FunctionalInterface
+    public interface HandleRequestFunction<T1, T2, T3, T4> {
+        void apply(T1 t1, T2 t2, T3 t3, T4 t4);
     }
 
 
@@ -142,16 +151,4 @@ public class TimeoutExctutorHttpClient {
             return this.response;
         }
     }
-
-    static class HttpRequestTask2 extends CompletableFuture<CloseableHttpResponse> {
-        private HttpUriRequest httpRequest;
-        private HttpClientContext httpContext;
-
-        public HttpRequestTask2(HttpUriRequest httpRequest, HttpClientContext httpContext) {
-            this.httpRequest = httpRequest;
-            this.httpContext = httpContext;
-        }
-    }
-
-
 }

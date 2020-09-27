@@ -15,7 +15,7 @@ public class TimeServerHandlerExecutorPool implements Executor {
          * @param unit keepAliveTime时间单位
          * @param workQueue 此线程池使用什么队列
          */
-        System.out.println(Runtime.getRuntime().availableProcessors());
+        System.out.println("CPU processors count: " + Runtime.getRuntime().availableProcessors());
         this.executorService = new ThreadPoolExecutor(Runtime.getRuntime().availableProcessors(),
                 maxPoolSize, 120L, TimeUnit.SECONDS, new ArrayBlockingQueue<Runnable>(queueSize));
     }
